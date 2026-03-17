@@ -41,19 +41,18 @@ if (process.env.VERCEL) {
   //     cache: []
   //   },
   // }
-} else if (process.env.CF_PAGES) {
+} else if (process.env.CF_PAGES || process.env.CLOUDFLARE_PAGES || process.env.CLOUDFLARE) {
   nitroOption.preset = "cloudflare-pages"
   nitroOption.unenv = {
     alias: {
       "safer-buffer": "node:buffer",
     },
   }
-  nitroOption.database = {
-    default: {
-      connector: "cloudflare-d1",
-      options: {
-        bindingName: "NEWSNOW_DB",
-      },
+  // 使用内存缓存替代数据库，避免 D1 配置问题
+  nitroOption.database = undefined
+  nitroOption.storage = {
+    cache: {
+      driver: "memory",
     },
   }
 } else if (process.env.BUN) {
